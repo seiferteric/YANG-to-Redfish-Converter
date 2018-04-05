@@ -175,6 +175,12 @@ def build_tree(yang_item, list_of_xml, xlogger, prefix="", topleveltypes=None, t
         xml_convenience.add_annotation(
             target, {'Term': 'RedfishYang.NodeType', 'EnumMember': member})
         target.set('Name', csdlname)
+        
+        mod_prefix = yang_item.i_module.i_prefix
+        key = (prefix+csdlname).split('.')[1:]
+        key.insert(0, mod_prefix)
+        target.set('Key', '/'.join(key))
+
         for item in content:
             build_tree_repeat(item, target, parent_entity, parent, list_of_xml, logger, prefix + csdlname + '.', topleveltypes=topleveltypes, toplevelimports=toplevelimports)
         xml_convenience.add_annotation(
@@ -195,6 +201,12 @@ def build_tree(yang_item, list_of_xml, xlogger, prefix="", topleveltypes=None, t
             'Name', csdlname)
         prop_node.set(
             'BaseType', 'Collection({}.{})'.format(prefix + "v1_0_0", csdlname))
+
+        mod_prefix = yang_item.i_module.i_prefix
+        key = (prefix+csdlname).split('.')[1:]
+        key.insert(0, mod_prefix)
+        prop_node.set('Key', '/'.join(key))
+        
         xml_convenience.add_annotation(
             prop_node, {'Term': 'RedfishYang.NodeType', 'EnumMember': member})
         xml_convenience.add_annotation(prop_node, {"Term": "OData.LongDescription",
@@ -386,6 +398,7 @@ def build_tree_repeat(yang_item, target, target_entity=None, target_parent=None,
                         if this_node is not None:
                             xml_nodes_to_annotate.append(this_node)
         for node in xml_nodes_to_annotate:
+
             augment_annotation = Element('Annotation')
             augment_annotation.set(
                 'Term', redfishtypes.get_descriptive_properties_mapping('augment'))
